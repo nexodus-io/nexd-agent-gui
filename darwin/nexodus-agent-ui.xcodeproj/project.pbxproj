@@ -13,7 +13,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		84A0DE1C2A96E34B00845C44 /* nexd-darwin-gui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nexd-darwin-gui.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		84A0DE1C2A96E34B00845C44 /* nexodus-agent-ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nexodus-agent-ui.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A0DE1F2A96E34B00845C44 /* nexd_darwin_guiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nexd_darwin_guiApp.swift; sourceTree = "<group>"; };
 		84A0DE232A96E34C00845C44 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		84A0DE252A96E34C00845C44 /* nexd_darwin_gui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = nexd_darwin_gui.entitlements; sourceTree = "<group>"; };
@@ -42,7 +42,7 @@
 		84A0DE1D2A96E34B00845C44 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84A0DE1C2A96E34B00845C44 /* nexd-darwin-gui.app */,
+				84A0DE1C2A96E34B00845C44 /* nexodus-agent-ui.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		84A0DE1B2A96E34B00845C44 /* nexd-darwin-gui */ = {
+		84A0DE1B2A96E34B00845C44 /* nexodus-agent-ui */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 84A0DE2B2A96E34C00845C44 /* Build configuration list for PBXNativeTarget "nexd-darwin-gui" */;
+			buildConfigurationList = 84A0DE2B2A96E34C00845C44 /* Build configuration list for PBXNativeTarget "nexodus-agent-ui" */;
 			buildPhases = (
 				84A0DE182A96E34B00845C44 /* Sources */,
 				84A0DE192A96E34B00845C44 /* Frameworks */,
@@ -73,9 +73,9 @@
 			);
 			dependencies = (
 			);
-			name = "nexd-darwin-gui";
+			name = "nexodus-agent-ui";
 			productName = "nexd-darwin-gui";
-			productReference = 84A0DE1C2A96E34B00845C44 /* nexd-darwin-gui.app */;
+			productReference = 84A0DE1C2A96E34B00845C44 /* nexodus-agent-ui.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -93,7 +93,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 84A0DE172A96E34B00845C44 /* Build configuration list for PBXProject "nexd-darwin-gui" */;
+			buildConfigurationList = 84A0DE172A96E34B00845C44 /* Build configuration list for PBXProject "nexodus-agent-ui" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -106,7 +106,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				84A0DE1B2A96E34B00845C44 /* nexd-darwin-gui */,
+				84A0DE1B2A96E34B00845C44 /* nexodus-agent-ui */,
 			);
 		};
 /* End PBXProject section */
@@ -327,7 +327,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84A0DE172A96E34B00845C44 /* Build configuration list for PBXProject "nexd-darwin-gui" */ = {
+		84A0DE172A96E34B00845C44 /* Build configuration list for PBXProject "nexodus-agent-ui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84A0DE292A96E34C00845C44 /* Debug */,
@@ -336,7 +336,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		84A0DE2B2A96E34C00845C44 /* Build configuration list for PBXNativeTarget "nexd-darwin-gui" */ = {
+		84A0DE2B2A96E34C00845C44 /* Build configuration list for PBXNativeTarget "nexodus-agent-ui" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84A0DE2C2A96E34C00845C44 /* Debug */,

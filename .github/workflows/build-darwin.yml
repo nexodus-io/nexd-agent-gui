@@ -1,0 +1,28 @@
+name: build darwin xcode/swift
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set Xcode version
+        run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+
+      - name: Build the App for x86_64
+        run: xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=x86_64'
+        working-directory: darwin
+
+      - name: Build the App for arm64
+        run: xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=arm64'
+        working-directory: darwin

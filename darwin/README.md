@@ -1,4 +1,4 @@
-## Darwin Nexd GUI
+## Darwin Nexd Agent GUI
 
 This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 
@@ -10,6 +10,7 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 ![no-alt-text](../docs/images/darwin-gui-dev-1.png)
 
 - Next run the app by hitting the play button.
+- Alternatively, to build from the cli you can build the app with `xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=arm64'` for M1 or `xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=x86_64'` for older Mac hardware. The build output will have the location of the `nexodus-agent-ui.app` you just built.
 
 ![no-alt-text](../docs/images/darwin-gui-dev-2.png)
 

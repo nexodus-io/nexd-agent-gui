@@ -1,4 +1,4 @@
-## Darwin Nexd GUI
+## Window Nexd Agent GUI
 
 This is a WIP nexd GUI for Windows written in C#. Contributions are welcome!
 
@@ -20,7 +20,7 @@ Next setup Visual Studio or whichever C# enabled IDE you are using.
 ![no-alt-text](../docs/images/windows-gui-dev-1.png)
 
 - Build and run the app by hitting the play button. This will add a Nexodus icon to the Windows desktop tray in the bottom right of the desktop. Interact with the app by right-clicking on the icon.
-- There is a debug directory that holds an exe if you would prefer to run that directly. If you do run the exe, ensure the privileges are elevated by running as Administrator.
+- Every time you build the project, there is a directory `bin\Debug\net6.0-windows\` that contains the built executable if you would prefer to run that directly. If you do run the exe, ensure the privileges are elevated by running as Administrator.
 
 ### Basic Functionality
 

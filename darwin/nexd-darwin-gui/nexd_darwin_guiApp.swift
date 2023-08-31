@@ -65,7 +65,6 @@ struct AppMenu: View {
     }
 
     func menuSettings() {} // Not Implemented
-
     func menuExit() {
         exit(0)
     }
