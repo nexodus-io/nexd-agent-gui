@@ -1,6 +1,6 @@
 ## Darwin Nexd GUI
 
-This is a basic nexd GUI for Darwin. Contributions are welcome!
+This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 
 ### Development Environment with xcode
 
@@ -15,7 +15,7 @@ This is a basic nexd GUI for Darwin. Contributions are welcome!
 
 ### Basic Functionality
 
-The basics are a dropdown menubar. Until we add a privileged helper such as [SMJobBless](https://developer.apple.com/library/archive/samplecode/SMJobBless/Introduction/Intro.html), most of the options will prompt for the sudo password for starting, stopping and terminating `nexd` and `wireguard-go`. The following is a brief summary of each option shown in the image above.
+The basics are a dropdown menubar. Until we add a privileged helper such as [SMJobBless](https://developer.apple.com/library/archive/samplecode/SMJobBless/Introduction/Intro.html), most of the options will prompt for the sudo password for starting, stopping and terminating `nexd` and `wireguard-go`. The following is a brief summary of each option shown in the image below.
 
 ![no-alt-text](../docs/images/darwin-gui-usage-1.png)
 
