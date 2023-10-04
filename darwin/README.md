@@ -2,28 +2,38 @@
 
 This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 
+### Quickstart
+
+- Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
+- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-10042023.pkg)
+- Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
+
 ### Development Environment with xcode
 
-- Clone and open `nexd-darwin-gui.xcodeproj`
+There are two components to this App. The GUI App `Nexodus Agent.app` in `/Applications/` and a helper process that handles priviledged executions as part of macOS excalated application framework `SMBJobless` located in `/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper`.
+
+- Clone and open `NexodusAgentApp.xcodeproj` with your swift editor.
 - In `Signing & Capabilities` of the project, select `Sing to Run Locally` and click the macOS trashcan under `App Sandbox` as shown in the following image.
 
 ![no-alt-text](../docs/images/darwin-gui-dev-1.png)
 
 - Next run the app by hitting the play button.
-- Alternatively, to build from the cli you can build the app with `xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=arm64'` for M1 or `xcodebuild clean build -project nexodus-agent-ui.xcodeproj -destination 'platform=macOS,arch=x86_64'` for older Mac hardware. The build output will have the location of the `nexodus-agent-ui.app` you just built.
 
 ![no-alt-text](../docs/images/darwin-gui-dev-2.png)
 
 ### Basic Functionality
 
-The basics are a dropdown menubar. Until we add a privileged helper such as [SMJobBless](https://developer.apple.com/library/archive/samplecode/SMJobBless/Introduction/Intro.html), most of the options will prompt for the sudo password for starting, stopping and terminating `nexd` and `wireguard-go`. The following is a brief summary of each option shown in the image below.
+The basics are a dropdown menubar. 
 
 ![no-alt-text](../docs/images/darwin-gui-usage-1.png)
 
-- `Connect` starts nexd. If there are no cached credentials, the app will watch the log files for a one-time code for login. If credentials are cached, nexd will connect.
-- `Disconnect` tears down nexd and kills the processes, nexd and wireguard-go.
+- `Connect`Nexodus starts nexd. If there are no cached credentials, the app will watch the log files for a one-time code for login. If credentials are cached, nexd will connect.
+- `Disconnect`Nexodus tears down nexd and kills the processes, nexd and wireguard-go.
+- `Start Nexd Service` starts the brew service.
+- `Stop Nexd Service` stops the brew service.
 - `Copy Auth URL` will copy the one-time Auth URL from the logs to your clipboard. From there you paste the URL into a browser.
-- `Settings` menu entry (not implemented).
+- `Debug` opens tools for debugging and and install/uninstaler for the helper.
 - `View Logs` Open nexd logs in the host's default text editor.
 - Once the device connects and is registered, the v4 and v6 IPs are in the menu if they are present on the Nexodus wireguard interface.
-- `Exit` Terminates the app with `exit(0)`. This does not disconnect `nexd` or pkill `wireguard-go`.
+- `Exit` Terminates the app.
+
