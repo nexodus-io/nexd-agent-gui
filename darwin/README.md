@@ -6,24 +6,8 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 
 - Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
 - Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-10042023.pkg)
+- Click on the `Naxodus Agent` app in the `/Applications` folder. The right click on the menubar and choose how you want to connect.
 - Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
-
-### Development Environment with xcode
-
-There are two components to this App. The GUI App `Nexodus Agent.app` in `/Applications/` and a helper process that handles priviledged executions as part of macOS excalated application framework `SMBJobless` located in `/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper`.
-
-- Clone and open `NexodusAgentApp.xcodeproj` with your swift editor.
-- In `Signing & Capabilities` of the project, select `Sing to Run Locally` and click the macOS trashcan under `App Sandbox` as shown in the following image.
-
-![no-alt-text](../docs/images/darwin-gui-dev-1.png)
-
-- Next run the app by hitting the play button.
-
-![no-alt-text](../docs/images/darwin-gui-dev-2.png)
-
-### Basic Functionality
-
-The basics are a dropdown menubar. 
 
 ![no-alt-text](../docs/images/darwin-gui-usage-1.png)
 
@@ -37,3 +21,24 @@ The basics are a dropdown menubar.
 - Once the device connects and is registered, the v4 and v6 IPs are in the menu if they are present on the Nexodus wireguard interface.
 - `Exit` Terminates the app.
 
+### Agent Removal
+
+To remove, simply stop the service and delete these two files.
+
+```console
+sudo rm -rf /Applications/Nexodus\ Agent.app/
+sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
+```
+
+### Development Environment with xcode
+
+There are two components to this App. The GUI App `Nexodus Agent.app` in `/Applications/` and a helper process that handles priviledged executions as part of macOS excalated application framework `SMBJobless` located in `/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper`.
+
+- Clone and open `NexodusAgentApp.xcodeproj` with your swift editor.
+- In `Signing & Capabilities` of the project, select `Sing to Run Locally` and click the macOS trashcan under `App Sandbox` as shown in the following image.
+
+![no-alt-text](../docs/images/darwin-gui-dev-1.png)
+
+- Next run the app by hitting the play button.
+
+![no-alt-text](../docs/images/darwin-gui-dev-2.png)
