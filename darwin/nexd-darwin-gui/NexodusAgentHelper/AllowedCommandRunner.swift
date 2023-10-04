@@ -1,5 +1,5 @@
-import Foundation
 import Authorized
+import Foundation
 
 /// Runs an allowed command.
 enum AllowedCommandRunner {
@@ -22,18 +22,18 @@ enum AllowedCommandRunner {
         } else if message.command.requiresAuth { // Authorization is required, but the client did not request it
             throw AllowedCommandError.authorizationNotRequested
         }
-        
+
         // Launch process and wait for it to finish
         let process = Process()
         process.launchPath = message.command.launchPath
         process.arguments = message.command.arguments
         process.qualityOfService = QualityOfService.userInitiated
-        
+
         // Set the PATH environment variable for nexd command
         var environment = ProcessInfo.processInfo.environment
         environment["PATH"] = "/opt/homebrew/bin:" + (environment["PATH"] ?? "")
         process.environment = environment
-        
+
         let outputPipe = Pipe()
         defer { outputPipe.fileHandleForReading.closeFile() }
         process.standardOutput = outputPipe
@@ -42,14 +42,14 @@ enum AllowedCommandRunner {
         process.standardError = errorPipe
         process.launch()
         process.waitUntilExit()
-        
+
         // Convert a pipe's data to a string if there was non-whitespace output
         let pipeAsString = { (pipe: Pipe) -> String? in
             let output = String(data: pipe.fileHandleForReading.availableData, encoding: String.Encoding.utf8)?
-                            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             return output.isEmpty ? nil : output
         }
-        
+
         // Special handling for the disconnect command
         switch message.command {
         case .nexDisconnect:
@@ -61,19 +61,19 @@ enum AllowedCommandRunner {
         case .nexdConnect:
             print("[DEBUG] starting nexd.")
             let logFilePath = "/var/lib/nexd/nexd-log.log"
-            
+
             // First command
             let prepLog = """
-                           chmod a+rx /var/lib/nexd/ && \
-                           touch \(logFilePath) && \
-                           chmod a+r \(logFilePath)
-                           """
+            chmod a+rx /var/lib/nexd/ && \
+            touch \(logFilePath) && \
+            chmod a+r \(logFilePath)
+            """
             executeShellCommand(prepLog)
             // Second command
             let connect = """
-                           PATH=/opt/homebrew/bin:$PATH && \
-                           /opt/homebrew/bin/nexd > \(logFilePath) 2>&1
-                           """
+            PATH=/opt/homebrew/bin:$PATH && \
+            /opt/homebrew/bin/nexd > \(logFilePath) 2>&1
+            """
             executeShellCommand(connect)
         case .startNexdService:
             let reply = manageNexdService(action: .start)
@@ -82,16 +82,21 @@ enum AllowedCommandRunner {
         case .stopNexdService:
             let reply = manageNexdService(action: .stop)
             return reply
+        case .openNexdLogs:
+            print("[DEBUG] opening nexd logs.")
+            let openStdoutLog = "open /opt/homebrew/var/log/nexd-stdout.log"
+            executeShellCommand(openStdoutLog)
+            let openStderrLog = "open /opt/homebrew/var/log/nexd-stderr.log"
+            executeShellCommand(openStderrLog)
         default:
             break
         }
- 
 
         return AllowedCommandReply(terminationStatus: process.terminationStatus,
                                    standardOutput: pipeAsString(outputPipe),
                                    standardError: pipeAsString(errorPipe))
     }
-    
+
     static func killProcesses(named names: [String]) {
         for name in names {
             let task = Process()
@@ -106,19 +111,19 @@ enum AllowedCommandRunner {
         let task = Process()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", command]
-        
+
         let outputPipe = Pipe()
         task.standardOutput = outputPipe
         let errorPipe = Pipe()
         task.standardError = errorPipe
-        
+
         task.launch()
         task.waitUntilExit()
-        
+
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
         let output = String(data: outputData, encoding: .utf8) ?? ""
         print("Command output: \(output)")
-        
+
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
         let errorOutput = String(data: errorData, encoding: .utf8) ?? ""
         print("Command error output: \(errorOutput)")
@@ -141,7 +146,7 @@ func manageNexdService(action: ServiceAction) -> AllowedCommandReply {
     var environment = ProcessInfo.processInfo.environment
     environment["HOMEBREW_GITHUB_API_TOKEN"] = "your_token_here"
     task.environment = environment
-    
+
     let outputPipe = Pipe()
     task.standardOutput = outputPipe
     let errorPipe = Pipe()
