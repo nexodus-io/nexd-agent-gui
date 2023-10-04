@@ -1,6 +1,6 @@
 ### Nexodus Agent GUI
 
-![no-alt-text](../docs/images/darwin-gui-usage-1.png)
+![no-alt-text](docs/images/darwin-gui-usage-1.png)
 
 Repo for WIP nexd agent GUIs.
 
