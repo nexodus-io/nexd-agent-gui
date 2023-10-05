@@ -1,8 +1,7 @@
 import Cocoa
+import os.log
 import SecureXPC
 import SwiftUI
-import SecureXPC
-import os.log
 
 @main
 struct UtilityApp: App {
@@ -19,14 +18,13 @@ struct UtilityApp: App {
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-
     var windowController: NSWindowController?
-    
+
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         sender.orderOut(nil) // Hide the window
         return false
     }
-    
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
     }
@@ -69,7 +67,6 @@ struct AppMenu: View {
     @State private var isLogDebuggingEnabled: Bool = false
     @State private var isCopyAuthURLButtonClicked: Bool = false
 
-
     private let sharedConstants = try? SharedConstants()
     private var xpcClient: XPCClient {
         guard let sharedConstants = sharedConstants else {
@@ -77,17 +74,18 @@ struct AppMenu: View {
         }
         return XPCClient.forMachService(named: sharedConstants.machServiceName)
     }
-    
+
     var appDelegate: AppDelegate? {
         return NSApp.delegate as? AppDelegate
     }
-    
+
     var body: some View {
         VStack {
             Group {
-                Button(action: menuConnect, label: { Text("Connect Nexodus") })
-                Button(action: menuDisconnect, label: { Text("Disconnect Nexodus") })
-                Divider()
+                // Uncomment to enable the binary only connection option for now
+                // Button(action: menuConnect, label: { Text("Connect Nexodus") })
+                // Button(action: menuDisconnect, label: { Text("Disconnect Nexodus") })
+                // Divider()
                 Button(action: startNexdService, label: { Text("Start Nexd Service") })
                 Button(action: stopNexdService, label: { Text("Stop Nexd Service") })
             }
@@ -112,7 +110,7 @@ struct AppMenu: View {
             }
         }
     }
-    
+
     func menuCopyAuthURLToClipboard() {
         // Check if the authURL is not empty
         if !authURL.isEmpty {
@@ -128,33 +126,31 @@ struct AppMenu: View {
     func menuConnect() {
         print("menuConnect() called.")
         sendCommand(.nexdConnect) {}
-        
         // Wait for 6 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             print("[DEBUG] Checking file for auth details.")
             self.checkFileForAuthDetails()
         }
     }
-    
+
     func menuDisconnect() {
         sendCommand(.nexDisconnect) {}
     }
 
     // New function to start Nexd service
     func startNexdService() {
-        print("startNexdService() called.")  // Debugging line
+        print("startNexdService() called.")
         sendCommand(.startNexdService) {
-            print("Nexd Service started.")  // Debugging line
+            print("Nexd Service started.")
         }
-        
+
         // Wait for 6 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-            print("[DEBUG] Checking file for auth details.")  // Debugging line
+            print("[DEBUG] Checking file for auth details.")
             self.checkNexctlForAuthDetails()
         }
     }
 
-    
     // New function to stop Nexd service
     func stopNexdService() {
         print("stopNexdService() called.")
@@ -162,7 +158,7 @@ struct AppMenu: View {
             print("Nexd Service stopped.")
         }
     }
-    
+
     func openNexdLogs() {
         sendCommand(.openNexdLogs) {}
     }
@@ -177,7 +173,7 @@ struct AppMenu: View {
             }
         }
     }
-    
+
     func menuExit() {
         sendCommand(.nexDisconnect) {
             exit(0)
@@ -188,15 +184,15 @@ struct AppMenu: View {
         guard let fileContents = try? String(contentsOfFile: "/var/lib/nexd/nexd-log.log") else { return }
         processOutput(fileContents)
     }
-    
+
     func checkNexctlForAuthDetails() {
-        print("Running 'nexctl nexd status' command through XPC helper...") // Debug
-        sendNexctlStatCommand() { output in
+        print("Running 'nexctl nexd status' command through XPC helper...")
+        sendNexctlStatCommand { output in
             if let output = output {
-                print("Command Output: \(output)") // Debug
+                print("Command Output: \(output)")
                 processOutput(output)
             } else {
-                print("Failed to get command output.") // Debug
+                print("Failed to get command output.")
             }
         }
     }
@@ -221,7 +217,7 @@ struct AppMenu: View {
         } else {
             print("No one-time code found in the logs.") // Debug
         }
-        
+
         if let urlMatch = output.range(of: "https://auth.try.nexodus.io/[^\\s]+", options: .regularExpression) {
             authURL = String(output[urlMatch.lowerBound ..< urlMatch.upperBound])
             print("Extracted URL: \(authURL)") // Debug
@@ -230,7 +226,7 @@ struct AppMenu: View {
             // If the URL isn't found, clear the authURL
             authURL = ""
         }
-        
+
         // Forcing showAlert to true for debugging
         showAlert = true
     }
@@ -241,7 +237,7 @@ struct AppMenu: View {
                 if ipAddressManager.isConnected {
                     Text(Image(systemName: "circle.fill")).foregroundColor(Color(red: 21/255, green: 116/255, blue: 51/255)) + Text("  Connected")
                 } else {
-                    Text(Image(systemName: "circle.fill")).foregroundColor(Color(red: 144/255, green: 40/255, blue: 48/255)) + Text("  Not Connected")
+                    Text(Image(systemName: "circle.fill")).foregroundColor(Color(red: 178/255, green: 53/255, blue: 43/255)) + Text("  Not Connected")
                 }
             }
             if ipAddressManager.isConnected {
@@ -264,16 +260,16 @@ struct AppMenu: View {
             print("IPv6: \(ipAddressManager.ipv6Address ?? "None")")
         }
     }
-    
+
     enum CommandResult {
         case success(String)
         case failure(Error)
     }
-    
+
     // Send a command and return stdout
     func sendCommandWithOutput(_ command: AllowedCommand, completion: @escaping (CommandResult) -> Void) {
         let message: AllowedCommandMessage = .standardCommand(command)
-        
+
         print("[DEBUG] Sent message command \(command) to the XPC helper meow...")
         DispatchQueue.global(qos: .userInitiated).async {
             self.xpcClient.sendMessage(message, to: SharedConstants.allowedCommandRoute) { response in
@@ -306,7 +302,7 @@ struct AppMenu: View {
         // Initialize the message here
         let message: AllowedCommandMessage
         message = .standardCommand(command)
-        
+
         print("[DEBUG] Sent message command \(command) to the XPC helper meow...")
         DispatchQueue.global(qos: .userInitiated).async {
             self.xpcClient.sendMessage(message, to: SharedConstants.allowedCommandRoute) { response in

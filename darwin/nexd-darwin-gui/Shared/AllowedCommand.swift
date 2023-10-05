@@ -17,7 +17,7 @@ enum AllowedCommand: Codable, CaseIterable {
     case startNexdService
     case stopNexdService
     case viewNexdLogs
-    case openNexdLogs
+case openNexdLogs
     
     var displayName: String {
         switch self {
@@ -82,7 +82,7 @@ enum AllowedCommand: Codable, CaseIterable {
         case .stopNexdService:
             path = "/bin/sh"
         case .openNexdLogs:
-            path = "/usr/bin/open"
+            path = "/bin/sh"
         case .viewNexdLogs:
             path = "/bin/cat"
         case .whoami:
@@ -127,7 +127,7 @@ enum AllowedCommand: Codable, CaseIterable {
             case .viewNexdLogs:
                 args = ["/var/lib/nexd/nexd-log.log"]
             case .openNexdLogs:
-                args = ["/var/lib/nexd/nexd-log.log"]
+                args = []
         }
         print("[DEBUG] arguments for \(self): \(args)")
         return args
