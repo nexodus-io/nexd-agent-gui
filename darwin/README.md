@@ -5,7 +5,7 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 ### Quickstart
 
 - Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
-- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-10042023.pkg)
+- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-10052023.pkg)
 - Click on the `Naxodus Agent` app in the `/Applications` folder. The right click on the menubar and choose how you want to connect.
 - Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
 
@@ -19,7 +19,18 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 - `Debug` opens tools for debugging and and install/uninstaler for the helper.
 - `View Logs` Open nexd logs in the host's default text editor.
 - Once the device connects and is registered, the v4 and v6 IPs are in the menu if they are present on the Nexodus wireguard interface.
-- `Exit` Terminates the app.
+- `Exit` Terminates the app. If running the default service mode, the service will continue running. If you reopen the App you can stop the service or even manually stop the service with: `sudo brew services stop nexodus-io/nexodus/nexodus`.
+
+### Agent Install Signing Workaround
+
+The packages isn't curerntly signed through the App store so you will need to make an exception for the package. 
+
+![no-alt-text](../docs/images/darwin-gui-install-1.png)
+
+
+To do this open the package and when prompted that it is from an unidentified developer, navigate to `System Preferences > Privacy and Security` click `Open Anyways`.
+
+![no-alt-text](../docs/images/darwin-gui-install-2.png)
 
 ### Agent Removal
 
