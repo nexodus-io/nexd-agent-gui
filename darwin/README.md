@@ -5,9 +5,17 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 ### Quickstart
 
 - Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
-- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-10042023.pkg)
+- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-macOS-10062023.pkg)
 - Click on the `Naxodus Agent` app in the `/Applications` folder. The right click on the menubar and choose how you want to connect.
 - Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
+- Note: if you are upgrading, you may need to kill the helper process until all scenarios are handled. This will clean things up prior to re-installing if you have an existing install. 
+
+```
+sudo brew services stop nexodus-io/nexodus/nexodus
+sudo pkill -9 -f "/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper"
+sudo rm -rf /Applications/Nexodus\ Agent.app/
+sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
+```
 
 ![no-alt-text](../docs/images/darwin-gui-usage-1.png)
 
