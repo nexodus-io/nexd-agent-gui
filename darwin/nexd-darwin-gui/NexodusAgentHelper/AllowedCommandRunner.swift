@@ -84,10 +84,11 @@ enum AllowedCommandRunner {
             return reply
         case .openNexdLogs:
             print("[DEBUG] opening nexd logs.")
-            let openStdoutLog = "open /opt/homebrew/var/log/nexd-stdout.log"
-            executeShellCommand(openStdoutLog)
-            let openStderrLog = "open /opt/homebrew/var/log/nexd-stderr.log"
-            executeShellCommand(openStderrLog)
+            let logPaths = findNexdLogs()
+            
+            for logPath in logPaths {
+                executeShellCommand("open \(logPath)")
+            }
         default:
             break
         }
@@ -137,14 +138,17 @@ enum ServiceAction {
 
 func manageNexdService(action: ServiceAction) -> AllowedCommandReply {
     print("[DEBUG] \(action == .start ? "Starting" : "Stopping") Nexodus service.")
-
+    
+    // Default to /opt/homebrew and override with HOMEBREW_PREFIX if it's set
+    let homebrewPrefix = ProcessInfo.processInfo.environment["HOMEBREW_PREFIX"] ?? "/opt/homebrew"
+    let brewBinaryPath = "\(homebrewPrefix)/bin/brew"
+    
     let task = Process()
     task.launchPath = "/usr/bin/sudo"
-    task.arguments = ["/opt/homebrew/bin/brew", "services", action == .start ? "start" : "stop", "nexodus-io/nexodus/nexodus"]
+    task.arguments = [brewBinaryPath, "services", action == .start ? "start" : "stop", "nexodus-io/nexodus/nexodus"]
     task.qualityOfService = .userInitiated
 
-    var environment = ProcessInfo.processInfo.environment
-    environment["HOMEBREW_GITHUB_API_TOKEN"] = "your_token_here"
+    let environment = ProcessInfo.processInfo.environment
     task.environment = environment
 
     let outputPipe = Pipe()
@@ -165,3 +169,27 @@ func manageNexdService(action: ServiceAction) -> AllowedCommandReply {
                                standardOutput: output.isEmpty ? nil : output,
                                standardError: errorOutput.isEmpty ? nil : errorOutput)
 }
+
+
+// Function to find nexd logs from a specific location based on HOMEBREW_PREFIX
+func findNexdLogs() -> [String] {
+    // Default to /opt/homebrew and override with HOMEBREW_PREFIX if it's set
+    let homebrewPrefix = ProcessInfo.processInfo.environment["HOMEBREW_PREFIX"] ?? "/opt/homebrew"
+    let logLocation = "\(homebrewPrefix)/var/log/"
+
+    var foundLogPaths: [String] = []
+    
+    let stdoutLogPath = "\(logLocation)nexd-stdout.log"
+    let stderrLogPath = "\(logLocation)nexd-stderr.log"
+        
+    if FileManager.default.fileExists(atPath: stdoutLogPath) {
+        foundLogPaths.append(stdoutLogPath)
+    }
+        
+    if FileManager.default.fileExists(atPath: stderrLogPath) {
+        foundLogPaths.append(stderrLogPath)
+    }
+    
+    return foundLogPaths
+}
+
