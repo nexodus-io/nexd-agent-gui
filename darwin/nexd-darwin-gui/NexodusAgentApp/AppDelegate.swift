@@ -8,12 +8,9 @@ struct UtilityApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
-        MenuBarExtra {
+        MenuBarExtra("Nexodus Agent", image: "nexodus-logo-square-48x48-menubar") {
             AppMenu()
-        } label: {
-            Image("nexodus-logo-square-48x48-menubar")
-        }
-        WindowGroup {}
+        }.menuBarExtraStyle(.menu)
     }
 }
 
@@ -21,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var windowController: NSWindowController?
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        sender.orderOut(nil) // Hide the window
+        sender.orderOut(nil)
         return false
     }
 
@@ -108,7 +105,7 @@ struct AppMenu: View {
                 Button(action: menuSettings, label: { Text("Debugging") })
                 Button(action: menuExit, label: { Text("Exit") })
             }
-        }
+        }.background(.ultraThickMaterial)
     }
 
     func menuCopyAuthURLToClipboard() {
@@ -144,8 +141,8 @@ struct AppMenu: View {
             print("Nexd Service started.")
         }
 
-        // Wait for 6 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+        // Wait for 4 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
             print("[DEBUG] Checking file for auth details.")
             self.checkNexctlForAuthDetails()
         }
