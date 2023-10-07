@@ -5,10 +5,10 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 ### Quickstart
 
 - Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
-- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-macOS-10062023.pkg)
+- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-macOS-10072023.pkg)
 - Click on the `Naxodus Agent` app in the `/Applications` folder. The right click on the menubar and choose how you want to connect.
 - Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
-- Note: if you are upgrading, you may need to kill the helper process until all scenarios are handled. This will clean things up prior to re-installing if you have an existing install. 
+- Note: if you are upgrading, you may need to kill the helper process until all scenarios are handled. This will clean things up prior to re-installing if you have an existing install. Once you clean those up, just re-install the new pkg.
 
 ```
 sudo brew services stop nexodus-io/nexodus/nexodus
@@ -17,7 +17,7 @@ sudo rm -rf /Applications/Nexodus\ Agent.app/
 sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
 ```
 
-![no-alt-text](../docs/images/darwin-gui-usage-1.png)
+<img src='../docs/images/darwin-gui-usage-1.png' width='325'>
 
 - `Connect`Nexodus starts nexd. If there are no cached credentials, the app will watch the log files for a one-time code for login. If credentials are cached, nexd will connect.
 - `Disconnect`Nexodus tears down nexd and kills the processes, nexd and wireguard-go.
@@ -33,12 +33,11 @@ sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
 
 The packages isn't curerntly signed through the App store so you will need to make an exception for the package. 
 
-![no-alt-text](../docs/images/darwin-gui-install-1.png)
-
+<img src='../docs/images/darwin-gui-install-1.png' width='450'>
 
 To do this open the package and when prompted that it is from an unidentified developer, navigate to `System Preferences > Privacy and Security` click `Open Anyways`.
 
-![no-alt-text](../docs/images/darwin-gui-install-2.png)
+<img src='../docs/images/darwin-gui-install-2.png' width='500'>
 
 ### Agent Removal
 

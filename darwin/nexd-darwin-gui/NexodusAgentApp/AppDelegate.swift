@@ -10,7 +10,7 @@ struct UtilityApp: App {
     var body: some Scene {
         MenuBarExtra("Nexodus Agent", image: "nexodus-logo-square-48x48-menubar") {
             AppMenu()
-        }.menuBarExtraStyle(.menu)
+        }.menuBarExtraStyle(.window)
     }
 }
 
@@ -63,6 +63,38 @@ struct AppMenu: View {
     @StateObject private var ipAddressManager = IPAddressManager()
     @State private var isLogDebuggingEnabled: Bool = false
     @State private var isCopyAuthURLButtonClicked: Bool = false
+    @State private var exitMode: Bool = false
+    @State private var serviceMode = 0
+    @State private var preferredTheme: Bool = true
+    // Button color states
+    @State private var startButtonForegroundColor: Color = .primary
+    @State private var startButtonBackgroundColor: Color = .clear
+    @State private var stopButtonForegroundColor: Color = .primary
+    @State private var stopButtonBackgroundColor: Color = .clear
+    @State private var authButtonForegroundColor: Color = .primary
+    @State private var authButtonBackgroundColor: Color = .clear
+    @State private var openAuthButtonForegroundColor: Color = .primary
+    @State private var openAuthButtonBackgroundColor: Color = .clear
+    @State private var logsButtonForegroundColor: Color = .primary
+    @State private var logsButtonBackgroundColor: Color = .clear
+    @State private var settingsButtonForegroundColor: Color = .primary
+    @State private var settingsButtonBackgroundColor: Color = .clear
+    @State private var diagnosticsButtonForegroundColor: Color = .primary
+    @State private var diagnosticsButtonBackgroundColor: Color = .clear
+    @State private var helpButtonForegroundColor: Color = .primary
+    @State private var helpButtonBackgroundColor: Color = .clear
+    @State private var quitButtonForegroundColor: Color = .primary
+    @State private var quitButtonBackgroundColor: Color = .clear
+    // Button color states
+    @State var isStartButtonClicked: Bool = false
+    @State var isStopButtonClicked: Bool = false
+    @State var isAuthButtonClicked: Bool = false
+    @State var isOpenAuthButtonClicked: Bool = false
+    @State var isLogsButtonClicked: Bool = false
+    @State var isSettingsButtonClicked: Bool = false
+    @State var isDiagnosticsButtonClicked: Bool = false
+    @State var isHelpButtonClicked: Bool = false
+    @State var isQuitButtonClicked: Bool = false
 
     private let sharedConstants = try? SharedConstants()
     private var xpcClient: XPCClient {
@@ -76,36 +108,346 @@ struct AppMenu: View {
         return NSApp.delegate as? AppDelegate
     }
 
+    func applyTheme() {
+        if preferredTheme {
+            NSApplication.shared.appearance = NSAppearance(named: .darkAqua)
+        } else {
+            NSApplication.shared.appearance = NSAppearance(named: .aqua)
+        }
+    }
+
     var body: some View {
-        VStack {
-            Group {
-                // Uncomment to enable the binary only connection option for now
-                // Button(action: menuConnect, label: { Text("Connect Nexodus") })
-                // Button(action: menuDisconnect, label: { Text("Disconnect Nexodus") })
-                // Divider()
-                Button(action: startNexdService, label: { Text("Start Nexd Service") })
-                Button(action: stopNexdService, label: { Text("Stop Nexd Service") })
-            }
-            Group {
-                Divider()
-                nexdStatusDisplay()
-                Button(action: menuCopyAuthURLToClipboard) {
+        GroupBox {
+            VStack(alignment: .leading) {
+                ///
+                /// Title
+                ///
+                HStack {
+                    Text("Nexodus Agent").font(.system(size: 15)).padding(.leading, 5)
+                    Spacer()
+                }
+                Picker("", selection: $serviceMode) {
+                    Text("Service Mode").tag(0).tint(.orange)
+                    Text("Process Mode").tag(1).tint(.orange)
+                }.pickerStyle(.segmented).labelsHidden().tint(.orange)
+                    .padding(3)
+                    .onHover { isOnMouseOver in
+                        isOnMouseOver ? NSCursor.pointingHand.push() : NSCursor.pop()
+                    }
+                ///
+                /// Start Nexd
+                ///
+                Button(action: {
+                    isStartButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isStartButtonClicked = false
+                    }
+                    startNexdService()
+                }) {
                     HStack {
-                        Image(systemName: "doc.on.doc")
-                            .foregroundColor(Color(red: 66/255, green: 72/255, blue: 82/255))
-                        Text("Copy Auth URL")
+                        Image(systemName: "play.fill")
+                            .foregroundColor(isStartButtonClicked ? Color.gray : startButtonForegroundColor)
+                        Text("Start Nexodus Service")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isStartButtonClicked ? Color.gray.opacity(0.4) : startButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    startButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    startButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                    isOnMouseOver ? NSCursor.pointingHand.push() : NSCursor.pop()
+                }
+                ///
+                /// Stop Nexd
+                ///
+                Button(action: {
+                    isStopButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isStopButtonClicked = false
+                    }
+                    stopNexdService()
+                }) {
+                    HStack {
+                        Image(systemName: "stop.fill")
+                            .foregroundColor(isStopButtonClicked ? Color.gray : stopButtonForegroundColor)
+                        Text("Stop Nexodus Service")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isStopButtonClicked ? Color.gray.opacity(0.4) : stopButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    stopButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    stopButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                    isOnMouseOver ? NSCursor.pointingHand.push() : NSCursor.pop()
+                }
+                Divider()
+                ///
+                /// Display the status and IPs once connected
+                ///
+                nexdStatusDisplay()
+                Divider()
+                ///
+                /// Authentication
+                ///
+                HStack(spacing: 10) {
+                    let isAuthURLAvailable = !authURL.isEmpty
+                    let sharedOpacity = isAuthURLAvailable ? 1.0 : 0.4
+                    
+                    // 'Copy Auth URL" button
+                    Button(action: {
+                        isCopyAuthURLButtonClicked = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            isCopyAuthURLButtonClicked = false
+                        }
+                        menuCopyAuthURLToClipboard()
+                    }) {
+                        HStack {
+                            Image(systemName: "doc.on.doc.fill")
+                                .foregroundColor(isAuthURLAvailable ? (isCopyAuthURLButtonClicked ? Color.gray : stopButtonForegroundColor) : Color.gray.opacity(0.7))
+                            Text("Copy Auth URL")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .opacity(sharedOpacity) // Apply shared opacity
+                        .padding(3)
+                        .frame(height: 25)
+                        .background(RoundedRectangle(cornerRadius: 5)
+                                        .foregroundColor(isCopyAuthURLButtonClicked ? Color.gray.opacity(0.4) : authButtonBackgroundColor))
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity)
+                    .disabled(!isAuthURLAvailable)
+                    .onHover { isOnMouseOver in
+                        guard isAuthURLAvailable else { return }
+                        authButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                        authButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                        isOnMouseOver ? NSCursor.pointingHand.push() : NSCursor.pop()
+                    }
+                    
+                    // 'Open Auth URL' button
+                    Button(action: {
+                        isOpenAuthButtonClicked = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            isOpenAuthButtonClicked = false
+                        }
+                        menuOpenAuthURLInBrowser()
+                    }) {
+                        HStack {
+                            Image(systemName: "book.pages.fill")
+                                .foregroundColor(isAuthURLAvailable ? (isOpenAuthButtonClicked ? Color.gray : openAuthButtonForegroundColor) : Color.gray.opacity(0.4))
+                            Text("Open Auth URL")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .opacity(sharedOpacity)
+                        .padding(3)
+                        .frame(height: 25)
+                        .background(RoundedRectangle(cornerRadius: 5)
+                                        .foregroundColor(isOpenAuthButtonClicked ? Color.gray.opacity(0.4) : openAuthButtonBackgroundColor))
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity)
+                    .disabled(!isAuthURLAvailable)
+                    .onHover { isOnMouseOver in
+                        guard isAuthURLAvailable else { return }
+                        openAuthButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                        openAuthButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                        isOnMouseOver ? NSCursor.pointingHand.push() : NSCursor.pop()
                     }
                 }
-                .disabled(authURL.isEmpty || isCopyAuthURLButtonClicked)
-                .opacity(isCopyAuthURLButtonClicked ? 0.5 : 1)
+
                 Divider()
-                Button(action: openNexdLogs, label: { Text("Open Nexodus Logs") })
+                ///
+                /// Exit Node Client
+                ///
+                HStack {
+                    Text("Enable Exit Node Client").opacity(0.7)
+                    Spacer()
+                    Toggle("", isOn: $exitMode)
+                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                }
+                .padding(.leading, 3)
+                Divider()
+                ///
+                /// Logs
+                ///
+                Button(action: {
+                    isLogsButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isLogsButtonClicked = false
+                    }
+                    openNexdLogs()
+                }) {
+                    HStack {
+                        Image(systemName: "rectangle.stack.fill")
+                            .foregroundColor(isLogsButtonClicked ? Color.gray : .primary)
+                        Text("Open Logs")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isLogsButtonClicked ? Color.gray.opacity(0.4) : logsButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    logsButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    logsButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                }
+                ///
+                /// Settings
+                ///
+                Button(action: {
+                    isSettingsButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isSettingsButtonClicked = false
+                    }
+                    menuSettings()
+                }) {
+                    HStack {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundColor(isSettingsButtonClicked ? Color.gray : .primary)
+                        Text("Settings")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isSettingsButtonClicked ? Color.gray.opacity(0.4) : settingsButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    settingsButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    settingsButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                }
+                ///
+                /// Diagnostics
+                ///
+                Button(action: {
+                    isDiagnosticsButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isDiagnosticsButtonClicked = false
+                    }
+                    menuSettings()
+                }) {
+                    HStack {
+                        Image(systemName: "wrench.adjustable.fill")
+                            .foregroundColor(isDiagnosticsButtonClicked ? Color.gray : .primary)
+                        Text("Diagnostics")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isDiagnosticsButtonClicked ? Color.gray.opacity(0.4) : diagnosticsButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    diagnosticsButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    diagnosticsButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                }
+                ///
+                /// Appearance
+                ///
+                HStack {
+                    Image(systemName: preferredTheme ? "moon.fill" : "sun.max.fill").padding(.leading, 3.5)
+                    Text(preferredTheme ? "Appearance" : "Appearance").opacity(0.7)
+                    Spacer()
+                    Toggle("", isOn: $preferredTheme)
+                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        .labelsHidden()
+                }
+                .onChange(of: preferredTheme) { _ in
+                    applyTheme()
+                }
+                ///
+                /// Help
+                ///
+                Link(destination: URL(string: "https://github.com/nexodus-io/nexodus")!) {
+                    HStack {
+                        Image("GitHub")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
+                        Text(" Nexodus Help")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isHelpButtonClicked ? Color.gray.opacity(0.4) : helpButtonBackgroundColor))
+                    .onTapGesture {
+                        isHelpButtonClicked = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            isHelpButtonClicked = false
+                        }
+                    }
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    helpButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    helpButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                }
+                ///
+                /// Quit
+                ///
+                Button(action: {
+                    isQuitButtonClicked = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isQuitButtonClicked = false
+                    }
+                    quitApp()
+                }) {
+                    HStack {
+                        Image(systemName: "rectangle.portrait.and.arrow.right.fill")
+                            .foregroundColor(isQuitButtonClicked ? Color.gray : quitButtonForegroundColor)
+                        Text("Quit")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(3)
+                    .frame(height: 25)
+                    .background(RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(isQuitButtonClicked ? Color.gray.opacity(0.4) : quitButtonBackgroundColor))
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity)
+                .onHover { isOnMouseOver in
+                    quitButtonForegroundColor = isOnMouseOver ? .white : Color.primary
+                    quitButtonBackgroundColor = isOnMouseOver ? Color(red: 70/255, green: 148/255, blue: 247/255) : .clear
+                }
             }
-            Group {
-                Button(action: menuSettings, label: { Text("Debugging") })
-                Button(action: menuExit, label: { Text("Exit") })
-            }
-        }.background(.ultraThickMaterial)
+        }
+        .padding(15)
+        .onAppear {
+            // Initialize with the default dark theme
+            preferredTheme = true
+            applyTheme()
+        }
+    }
+
+    func diagnostics() {
+        print("diagnostics called.")
     }
 
     func menuCopyAuthURLToClipboard() {
@@ -120,11 +462,24 @@ struct AppMenu: View {
         }
     }
 
+    func menuOpenAuthURLInBrowser() {
+        // Check if the authURL is not empty
+        if !authURL.isEmpty {
+            if let url = URL(string: authURL) {
+                NSWorkspace.shared.open(url)
+            } else {
+                print("Invalid Auth URL format.")
+            }
+        } else {
+            print("Auth URL is empty or not set.")
+        }
+    }
+
     func menuConnect() {
-        print("menuConnect() called.")
+        print("[DEBUG] menuConnect() called.")
         sendCommand(.nexdConnect) {}
-        // Wait for 6 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+        // Wait for 5 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             print("[DEBUG] Checking file for auth details.")
             self.checkFileForAuthDetails()
         }
@@ -136,11 +491,10 @@ struct AppMenu: View {
 
     // New function to start Nexd service
     func startNexdService() {
-        print("startNexdService() called.")
+        print("[DEBUG] startNexdService() called.")
         sendCommand(.startNexdService) {
             print("Nexd Service started.")
         }
-
         // Wait for 4 seconds and then read the file (TODO: should be a retry instead of a fixed timer)
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
             print("[DEBUG] Checking file for auth details.")
@@ -150,7 +504,7 @@ struct AppMenu: View {
 
     // New function to stop Nexd service
     func stopNexdService() {
-        print("stopNexdService() called.")
+        print("[DEBUG] stopNexdService() called.")
         sendCommand(.stopNexdService) {
             print("Nexd Service stopped.")
         }
@@ -171,23 +525,23 @@ struct AppMenu: View {
         }
     }
 
-    func menuExit() {
-        sendCommand(.nexDisconnect) {
-            exit(0)
-        }
+    func quitApp() {
+        // TODO: Add back for process mode
+        // sendCommand(.nexDisconnect) {
+        exit(0)
     }
 
     func checkFileForAuthDetails() {
         guard let fileContents = try? String(contentsOfFile: "/var/lib/nexd/nexd-log.log") else { return }
-        processOutput(fileContents)
+        getAuthURL(fileContents)
     }
 
     func checkNexctlForAuthDetails() {
-        print("Running 'nexctl nexd status' command through XPC helper...")
+        print("[DEBUG] Running 'nexctl nexd status' command through XPC helper...")
         sendNexctlStatCommand { output in
             if let output = output {
                 print("Command Output: \(output)")
-                processOutput(output)
+                getAuthURL(output)
             } else {
                 print("Failed to get command output.")
             }
@@ -206,49 +560,55 @@ struct AppMenu: View {
         }
     }
 
-    func processOutput(_ output: String) {
+    func getAuthURL(_ output: String) {
         if let codeMatch = output.range(of: "Your one-time code is: ([A-Z\\-]+)", options: .regularExpression) {
             // Extract only the code for debug logs
             oneTimeCode = String(output[codeMatch.lowerBound ..< codeMatch.upperBound].dropFirst(24))
-            print("Extracted one-time code: \(oneTimeCode)") // Debug
+            print("[DEBUG] Extracted one-time code: \(oneTimeCode)")
         } else {
-            print("No one-time code found in the logs.") // Debug
+            print("[DEBUG] No one-time code found in the logs.")
         }
 
         if let urlMatch = output.range(of: "https://auth.try.nexodus.io/[^\\s]+", options: .regularExpression) {
             authURL = String(output[urlMatch.lowerBound ..< urlMatch.upperBound])
-            print("Extracted URL: \(authURL)") // Debug
+            print("[DEBUG] Extracted URL: \(authURL)")
         } else {
-            print("No auth URL found in the logs.") // Debug
+            print("[DEBUG] No auth URL found in the logs.")
             // If the URL isn't found, clear the authURL
             authURL = ""
         }
-
-        // Forcing showAlert to true for debugging
-        showAlert = true
     }
 
     private func nexdStatusDisplay() -> some View {
         Group {
-            HStack {
-                if ipAddressManager.isConnected {
-                    Text(Image(systemName: "circle.fill")).foregroundColor(Color(red: 21/255, green: 116/255, blue: 51/255)) + Text("  Connected")
-                } else {
-                    Text(Image(systemName: "circle.fill")).foregroundColor(Color(red: 178/255, green: 53/255, blue: 43/255)) + Text("  Not Connected")
+            VStack(alignment: .leading) {
+                // Connection status
+                HStack {
+                    if ipAddressManager.isConnected {
+                        Text(Image(systemName: "globe"))
+                            .foregroundColor(Color(red: 0/255, green: 204/255, blue: 0/255))
+                        Text("Connected").opacity(0.8)
+                    } else {
+                        Text(Image(systemName: "globe"))
+                            .foregroundColor(Color(red: 178/255, green: 43/255, blue: 33/255))
+                        Text("Not Connected").opacity(0.8)
+                    }
                 }
-            }
-            if ipAddressManager.isConnected {
-                VStack(alignment: .leading) {
-                    if let ipv4 = ipAddressManager.ipv4Address {
-                        HStack {
-                            Text("IPv4: \(ipv4)")
+                .padding([.top, .bottom], 1)
+                .padding([.leading, .trailing], 15)
+                // IP Addresses
+                if ipAddressManager.isConnected {
+                    HStack {
+                        if let ipv4 = ipAddressManager.ipv4Address {
+                            Text("IPv4: \(ipv4)").frame(maxWidth: .infinity, alignment: .leading).opacity(0.8)
+                        }
+                        Spacer()
+                        if let ipv6 = ipAddressManager.ipv6Address {
+                            Text("IPv6: \(ipv6)").frame(maxWidth: .infinity, alignment: .trailing).opacity(0.8)
                         }
                     }
-                    if let ipv6 = ipAddressManager.ipv6Address {
-                        HStack {
-                            Text("IPv6: \(ipv6)")
-                        }
-                    }
+                    .padding([.top, .bottom], 1)
+                    .padding([.leading, .trailing], 15)
                 }
             }
         }.onAppear {
@@ -296,7 +656,6 @@ struct AppMenu: View {
 
     // Send a command and ignore stdout
     func sendCommand(_ command: AllowedCommand, completion: @escaping () -> Void) {
-        // Initialize the message here
         let message: AllowedCommandMessage
         message = .standardCommand(command)
 
@@ -315,7 +674,7 @@ struct AppMenu: View {
                     case .failure(let error):
                         print("[DEBUG] Error response: \(error)")
                     }
-                    completion() // completion closure here
+                    completion()
                 }
             }
         }
