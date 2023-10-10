@@ -17,7 +17,7 @@ Next setup Visual Studio or whichever C# enabled IDE you are using.
   - Search for "System.Windows.Forms" and "System.Drawing.Common".
   - Install the first package returned.
 
-![no-alt-text](../docs/images/windows-gui-dev-1.png)
+<img src='../docs/images/windows-gui-dev-1.png' width='400'>
 
 - Build and run the app by hitting the play button. This will add a Nexodus icon to the Windows desktop tray in the bottom right of the desktop. Interact with the app by right-clicking on the icon.
 - Every time you build the project, there is a directory `bin\Debug\net6.0-windows\` that contains the built executable if you would prefer to run that directly. If you do run the exe, ensure the privileges are elevated by running as Administrator.
@@ -26,7 +26,7 @@ Next setup Visual Studio or whichever C# enabled IDE you are using.
 
  The following is a brief summary of each option shown in the image below.
 
-![no-alt-text](../docs/images/windows-gui-usage-1.png)
+<img src='../docs/images/windows-gui-usage-1.png' width='275'>
 
 - `Connect` starts nexd. If there are no cached credentials, the app will watch the log files for a one-time code for login. If credentials are cached, nexd will connect.
 - `Disconnect` tears down nexd and kills the processes, `nexd.exe` and `wireguard.exe`.
