@@ -1,4 +1,6 @@
-## Window Nexodus Agent GUI
+## Window Nexodus Agent GUI (Stale)
+
+Soon to be deleted, see the cross-platform Electron implementation here [Electron Nexodus Agent GUI](../linux-windows/README.md)
 
 This is a WIP nexd GUI for Windows written in C#. Contributions are welcome!
 
