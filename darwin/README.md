@@ -1,4 +1,4 @@
-## Darwin Nexd Agent GUI
+## Darwin Nexodus Agent GUI
 
 This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 
