@@ -9,9 +9,13 @@
     "build": "vite build",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make-win": "electron-forge make --platform=win32",
     "publish": "electron-forge publish",
-    "package-linux-amd64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=x64",
+    "package-linux-x64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=x64",
     "package-linux-arm64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=arm64",
+    "package-windows-x64": "electron-packager . nexodus-agent-gui --platform=win32 --arch=x64",
+    "package-windows-arm64": "electron-packager . nexodus-agent-gui --platform=win32 --arch=arm64",
+    "pack:win": "electron-builder build --win",
     "lint": "eslint --ext .ts,.tsx nexodus-agent-gui"
   },
   "keywords": [],
@@ -20,6 +24,24 @@
     "email": "bsalisbu@redhat.com"
   },
   "license": "MIT",
+  "build": {
+    "appId": "com.nexodus.agent",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
     "@electron-forge/maker-deb": "^6.4.2",
@@ -32,6 +54,7 @@
     "@typescript-eslint/parser": "^5.0.0",
     "electron": "26.3.0",
     "electron-packager": "^17.1.2",
+    "electron-builder": "^24.6.4",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "ts-node": "^10.0.0",

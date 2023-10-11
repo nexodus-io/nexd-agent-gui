@@ -37,6 +37,6 @@ jobs:
         run: npm run build
         working-directory: linux
 
-      - name: Package amd64
-        run: npm run package-linux-amd64
+      - name: Package x64
+        run: npm run package-linux-x64
         working-directory: linux
