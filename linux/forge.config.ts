@@ -8,13 +8,20 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 const config: ForgeConfig = {
   packagerConfig: {},
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerDeb({}), new MakerRpm({}), new MakerZIP({})],
+  makers: [
+    new MakerSquirrel({
+      name: "Nexodus Agent GUI",
+      authors: "Project Nexodus",
+      description: "Project Nexodus Agent GUI"
+    }),
+    new MakerDeb({}),
+    new MakerRpm({}),
+    new MakerZIP({})
+  ],
   plugins: [
     new VitePlugin({
-      // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
       build: [
         {
-          // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
           entry: 'src/main.ts',
           config: 'vite.main.config.ts',
         },
