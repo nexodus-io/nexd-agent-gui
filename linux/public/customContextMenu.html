@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Context Menu</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.95);
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        li {
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+        li:hover {
+            background: #eee;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        .separator {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li id="start-service">Start Nexodus Service</li>
+    <li id="stop-service">Stop Nexodus Service</li>
+    <li class="separator"></li>
+    <li id="view-logs">View Logs</li>
+    <li id="settings">Settings</li>
+    <li id="quit">Quit</li>
+</ul>
+
+<script>
+    // Handle clicks on each menu item, calling Electron IPC or invoking shell commands
+    document.getElementById('start-service').addEventListener('click', function() {
+        // Invoke Electron IPC or shell command to start the service
+    });
+
+    document.getElementById('stop-service').addEventListener('click', function() {
+        // Invoke Electron IPC or shell command to stop the service
+    });
+
+    document.getElementById('view-logs').addEventListener('click', async function() {
+        // Invoke Electron IPC or shell command to view logs
+    });
+
+    document.getElementById('settings').addEventListener('click', function() {
+        // Invoke Electron IPC or shell command to open settings
+    });
+
+    document.getElementById('quit').addEventListener('click', function() {
+        // Invoke Electron IPC or shell command to quit the app
+    });
+</script>
+</body>
+</html>

@@ -4,5 +4,6 @@
 
 Repo for WIP nexd agent GUIs.
 
-- [Darwin Development Docs](./darwin/README.md)
-- [Windows Development Docs](./windows/README.md)
+- [Darwin Install and Development](./darwin/README.md)
+- [Linux Install and Development](./linux/README.md)
+- [Windows Install and Development](./windows/README.md)
