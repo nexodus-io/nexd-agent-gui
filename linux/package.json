@@ -1,15 +1,18 @@
 {
   "name": "nexodus-agent-gui",
   "productName": "nexodus-agent-gui",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "My Electron application description",
-  "main": ".vite/build/main.js",
+  "main": "src/main.ts",
   "scripts": {
     "start": "vite build && electron-forge start",
+    "build": "vite build",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "package-linux-amd64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=x64",
+    "package-linux-arm64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=arm64",
+    "lint": "eslint --ext .ts,.tsx nexodus-agent-gui"
   },
   "keywords": [],
   "author": {
@@ -28,6 +31,7 @@
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "electron": "26.3.0",
+    "electron-packager": "^17.1.2",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "ts-node": "^10.0.0",

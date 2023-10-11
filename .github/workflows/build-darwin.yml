@@ -22,19 +22,19 @@ jobs:
       # First run, ignore failure due to generated file launchd.plist build race condition
       #- name: Build the App for x86_64 (First Run)
         #run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentHelper" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        #working-directory: darwin/nexd-darwin-gui
+        #working-directory: darwin/
         #continue-on-error: true # Ignore this failure
 
       - name: Build the App for x86_64 (Second Run)
         run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentHelper" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        working-directory: darwin/nexd-darwin-gui
+        working-directory: darwin
 
       # First run, ignore failure due to generated file launchd.plist build race condition
       #- name: Build the App for x86_64 (First Run)
        # run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentApp" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        #working-directory: darwin/nexd-darwin-gui
+        #working-directory: darwin/
         #continue-on-error: true # Ignore this failure
 
       - name: Build the App for x86_64 (Second Run)
         run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentApp" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        working-directory: darwin/nexd-darwin-gui
+        working-directory: darwin

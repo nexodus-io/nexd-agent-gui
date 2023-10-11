@@ -1,4 +1,4 @@
-## Window Nexd Agent GUI
+## Window Nexodus Agent GUI
 
 This is a WIP nexd GUI for Windows written in C#. Contributions are welcome!
 
