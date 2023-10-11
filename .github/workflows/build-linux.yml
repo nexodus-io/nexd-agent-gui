@@ -1,0 +1,42 @@
+name: build linux
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 18.18.1
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.18.1'
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: linux
+
+      - name: Run Build
+        run: npm run build
+        working-directory: linux
+
+      - name: Package x64
+        run: npm run package-linux-x64
+        working-directory: linux
