@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import path from 'path';
+import * as path from 'path';
 
 export default defineConfig({
   build: {
@@ -14,13 +14,10 @@ export default defineConfig({
     browserField: false,
     mainFields: ['module', 'jsnext:main', 'jsnext'],
     alias: {
-      // If you have custom aliases, add them here
     }
   },
   esbuild: {
-    // Specify that we're building for a NodeJS environment
     platform: 'node',
-    // Enable TypeScript support
     loader: 'ts'
   }
 });

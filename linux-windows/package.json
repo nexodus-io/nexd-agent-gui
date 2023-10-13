@@ -1,0 +1,65 @@
+{
+  "name": "nexodus-agent-gui",
+  "productName": "nexodus-agent-gui",
+  "version": "0.1.0",
+  "type": "commonjs",
+  "description": "Nexodus Agent GUI",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "vite build && electron-forge start",
+    "compile": "tsc",
+    "package-linux-x64": "electron-packager . dist/nexodus-agent-gui --platform=linux --arch=x64 --icon=./nexodus-500x500.ico",
+    "package-linux-arm64": "electron-packager . nexodus-agent-gui --platform=linux --arch=arm64 --icon=./nexodus-500x500.ico",
+    "package-windows-x64": "electron-packager . nexodus-agent-gui --platform=win32 --arch=x64 --icon=./nexodus-500x500.ico",
+    "package-windows-arm64": "electron-packager . nexodus-agent-gui --platform=win32 --arch=arm64 --icon=./nexodus-500x500.ico",
+    "lint": "eslint --ext .ts,.tsx nexodus-agent-gui",
+    "pretty": "prettier --write \"src/**/*.{js,ts,jsx,tsx,json,css,scss}\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "Project Nexodus",
+    "email": "dev@nexodus.io"
+  },
+  "license": "MIT",
+  "build": {
+    "appId": "com.nexodus.agent",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-vite": "^6.4.2",
+    "@electron-forge/shared-types": "^6.4.2",
+    "@typescript-eslint/parser": "^5.0.0",
+    "electron": "26.3.0",
+    "electron-packager": "^17.1.2",
+    "eslint": "^8.0.1",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "sudo-prompt": "^9.2.1",
+    "ts-node": "^10.9.1"
+  }
+}

@@ -12,7 +12,7 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       name: "Nexodus Agent GUI",
       authors: "Project Nexodus",
-      description: "Project Nexodus Agent GUI"
+      description: "Project Nexodus Agent GUI",
     }),
     new MakerDeb({}),
     new MakerRpm({}),
