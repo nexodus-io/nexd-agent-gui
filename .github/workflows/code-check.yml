@@ -1,0 +1,35 @@
+name: Check Code Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-formatting:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: linux-windows
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Prettier
+        run: npm run pretty
+
+      - name: Check for Modified Files
+        run: |
+          git diff --exit-code || (echo "Code was modified by prettier. To resolve this run, npm run install and amend your commit." && exit 1)
