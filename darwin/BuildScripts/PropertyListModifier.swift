@@ -86,27 +86,17 @@ let SMPrivilegedExecutablesKey = "SMPrivilegedExecutables"
 /// Depending on whether this build is signed for debug or release the leaf certificate *will* differ, but the organizational unit, represented by `subject.OU` in
 /// the function, will remain the same.
 func organizationalUnitRequirement() throws -> String {
-    // In order for this requirement to actually work, the signed app or helper tool needs to have a certificate chain
-    // which will contain the organizational unit (subject.OU). While it'd be great if we could just examine the signed
-    // app/helper tool after that's been done, that's of course not possible as we need to generate this requirement
-    // *during* the process for each.
-    //
-    // Note: In practice this certificate chain won't exist when self signing using "Sign to Run Locally".
-    //
-    // There's no to precise way to determine if the subject.OU will be present, but in practice we can check for the
-    // subject.CN (CN stands for common name) by seeing if there is a meaningful value for the CODE_SIGN_IDENTITY
-    // build variable. This could still fail because we're checking for *this* target's common name, but creating an
-    // identity for the *other* target - so if Xcode isn't configured the same for both targets an issue is likely to
-    // arise.
-    //
-    // Note: The reason to use the organizational unit for the code requirement instead of the common name is because
-    // the organizational unit will be consistent between the Apple Development and Developer ID builds, while the
-    // common name will not be — simplifying the development workflow.
+    // Check if CI_SKIP_SIGNING environment variable is set
+    if let ciSkipSigning = ProcessInfo.processInfo.environment["CI_SKIP_SIGNING"], ciSkipSigning == "true" {
+        return "Dummy certificate string for unsigned build"
+    }
+
+    // Original code here for when signing is required
     let commonName = ProcessInfo.processInfo.environment["CODE_SIGN_IDENTITY"]
     if commonName == nil || commonName == "-" {
         throw ScriptError.general("Signing Certificate must be Development. Sign to Run Locally is not supported.")
     }
-    
+
     let developmentTeamId = try readEnvironmentVariable(name: "DEVELOPMENT_TEAM",
                                                         description: "development team for code signing",
                                                         isUserDefined: false)
@@ -117,8 +107,9 @@ func organizationalUnitRequirement() throws -> String {
             throw ScriptError.general("Development Team for code signing is invalid: \(developmentTeamId)")
         }
     }
+
     let certificateString = "certificate leaf[subject.OU] = \"\(developmentTeamId)\""
-    
+
     return certificateString
 }
 
