@@ -10,12 +10,13 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macOS-13
     timeout-minutes: 20
     env:
       APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
-      KEYCHAIN_PASSWORD: password123
-      P12_PASSWORD: password123
+      KEYCHAIN_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PWD }}
+      P12_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PWD }}
+      CI_SKIP_SIGNING: true
 
     steps:
       - name: Checkout repository
@@ -24,25 +25,22 @@ jobs:
       - name: Set Xcode version
         run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 
-      - name: Debug Check if the APPLE_DEV_CERT environment variable is empty
+      - name: Print xcodebuild version
         run: |
-          if [ -z "$APPLE_DEV_CERT" ]; then
-            echo "APPLE_DEV_CERT environment variable is empty"
-          else
-            echo "APPLE_DEV_CERT environment variable is set"
-          fi
+          xcodebuild -version
+          sudo ls -1 /Applications | grep "Xcode"
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s '/Applications/Xcode_15.0.app/Contents/Developer'
 
       - name: Install the Apple certificate
         run: |
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          
           echo -n "$APPLE_DEV_CERT" | base64 --decode -o $CERTIFICATE_PATH
-          
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
@@ -53,9 +51,9 @@ jobs:
         run: security unlock-keychain -p actions $RUNNER_TEMP/app-signing.keychain-db
 
       - name: Build the App for x86_64
-        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentApp -configuration Debug -destination 'platform=macOS,arch=x86_64'
+        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentApp
         working-directory: darwin
 
       - name: Build the Helper for x86_64
-        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentHelper -configuration Debug -destination 'platform=macOS,arch=x86_64'
+        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentHelper
         working-directory: darwin
