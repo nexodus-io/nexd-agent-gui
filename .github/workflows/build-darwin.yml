@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
 
     steps:
       - name: Checkout repository
@@ -19,22 +21,37 @@ jobs:
       - name: Set Xcode version
         run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 
-      # First run, ignore failure due to generated file launchd.plist build race condition
-      #- name: Build the App for x86_64 (First Run)
-        #run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentHelper" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        #working-directory: darwin/
-        #continue-on-error: true # Ignore this failure
+      - name: Debug Check if the APPLE_DEV_CERT environment variable is empty
+        run: |
+          if [ -z "$APPLE_DEV_CERT" ]; then
+            echo "APPLE_DEV_CERT environment variable is empty"
+          else
+            echo "APPLE_DEV_CERT environment variable is set"
+          fi
+        env:
+          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
 
-      - name: Build the App for x86_64 (Second Run)
-        run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentHelper" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
+      - name: Import Apple Development credentials
+        run: |
+          echo $APPLE_DEV_CERT | base64 --decode --output certificate.p12
+          security create-keychain -p password123 build.keychain
+          security unlock-keychain -p password123 build.keychain
+          security import certificate.p12 -k build.keychain -P "password123" -T /usr/bin/codesign
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+        env:
+          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
+
+      - name: List keychain contents
+        run: security find-identity -v -p codesigning
+
+      - name: Unlock keychain
+        run: security unlock-keychain -p actions build.keychain
+
+      - name: Build the App for x86_64
+        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentApp -configuration Debug -destination 'platform=macOS,arch=x86_64'
         working-directory: darwin
 
-      # First run, ignore failure due to generated file launchd.plist build race condition
-      #- name: Build the App for x86_64 (First Run)
-       # run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentApp" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
-        #working-directory: darwin/
-        #continue-on-error: true # Ignore this failure
-
-      - name: Build the App for x86_64 (Second Run)
-        run: xcodebuild -project "NexodusAgentApp.xcodeproj" -scheme "NexodusAgentApp" -configuration Debug -destination 'platform=macOS,arch=x86_64' CODE_SIGNING_ALLOWED=NO
+      - name: Build the Helper for x86_64
+        run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentHelper -configuration Debug -destination 'platform=macOS,arch=x86_64'
         working-directory: darwin
