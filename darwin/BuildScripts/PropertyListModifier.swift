@@ -236,6 +236,12 @@ func updatePropertyListWithEntries(_ newEntries: [String : AnyHashable], atPath 
 
 /// Updates the property list by removing the provided keys (if present) or deletes the file if there are now no entries.
 func removePropertyListEntries(forKeys keys: [String], atPath path: URL) throws {
+    // Check if the file name is 'launchd.plist' and return if it is
+    if path.lastPathComponent == "launchd.plist" {
+        print("Skipping the processing of launchd.plist.")
+        return
+    }
+
     let (entries, format) = try readPropertyList(atPath: path)
     for key in keys {
         entries.removeObject(forKey: key)
@@ -247,6 +253,7 @@ func removePropertyListEntries(forKeys keys: [String], atPath path: URL) throws 
         try FileManager.default.removeItem(at: path)
     }
 }
+
 
 /// The path of the info property list for this target.
 func infoPropertyListPath() throws -> URL {
