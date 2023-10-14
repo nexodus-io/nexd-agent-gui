@@ -11,8 +11,11 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    timeout-minutes: 20
     env:
       APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
+      KEYCHAIN_PASSWORD: password123
+      P12_PASSWORD: password123
 
     steps:
       - name: Checkout repository
@@ -28,25 +31,26 @@ jobs:
           else
             echo "APPLE_DEV_CERT environment variable is set"
           fi
-        env:
-          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
 
-      - name: Import Apple Development credentials
+      - name: Install the Apple certificate
         run: |
-          echo $APPLE_DEV_CERT | base64 --decode --output certificate.p12
-          security create-keychain -p password123 build.keychain
-          security unlock-keychain -p password123 build.keychain
-          security import certificate.p12 -k build.keychain -P "password123" -T /usr/bin/codesign
-          security list-keychains -s build.keychain
-          security default-keychain -s build.keychain
-        env:
-          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          
+          echo -n "$APPLE_DEV_CERT" | base64 --decode -o $CERTIFICATE_PATH
+          
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
 
       - name: List keychain contents
         run: security find-identity -v -p codesigning
 
       - name: Unlock keychain
-        run: security unlock-keychain -p actions build.keychain
+        run: security unlock-keychain -p actions $RUNNER_TEMP/app-signing.keychain-db
 
       - name: Build the App for x86_64
         run: xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentApp -configuration Debug -destination 'platform=macOS,arch=x86_64'
