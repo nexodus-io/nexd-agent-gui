@@ -5,9 +5,9 @@ This is a WIP nexd GUI for Darwin written in Swift. Contributions are welcome!
 ### Quickstart
 
 - Install the Nexodus brew package for macOS described in the [Nexodus Quickstart](https://docs.nexodus.io/quickstart/)
-- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](./dist/NexodusAgent-macOS-10072023.pkg)
+- Download and install the Neoxodus Agent GUI from this repo [NexodusAgent.pkg](https://nexodus-io.s3.amazonaws.com/gui/NexodusAgent-macOS-10072023.pkg)
 - Click on the `Naxodus Agent` app in the `/Applications` folder. The right click on the menubar and choose how you want to connect.
-- Right click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
+- Right-click on the menubar app to start the service. If the host is not authenticated yet, the copy auth selection in the menu will be clickable and will copy the one-time auth to your clipboard to paste in a browser.
 - Note: if you are upgrading, you may need to kill the helper process until all scenarios are handled. This will clean things up prior to re-installing if you have an existing install. Once you clean those up, just re-install the new pkg.
 
 ```
@@ -31,7 +31,7 @@ sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
 
 ### Agent Install Signing Workaround
 
-The packages isn't curerntly signed through the App store so you will need to make an exception for the package. 
+The packages are not currently signed through the App store, so you will need to make an exception for the package. 
 
 <img src='../docs/images/darwin-gui-install-1.png' width='450'>
 
@@ -50,13 +50,21 @@ sudo rm /Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper
 
 ### Development Environment with xcode
 
-There are two components to this App. The GUI App `Nexodus Agent.app` in `/Applications/` and a helper process that handles priviledged executions as part of macOS excalated application framework `SMBJobless` located in `/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper`.
+There are two components to this App. The GUI App `Nexodus Agent.app` in `/Applications/` and a helper process that handles privileged executions as part of macOS escalated application framework `SMBJobless` located in `/Library/PrivilegedHelperTools/io.nexodus.nexodus-gui.helper`.
 
 - Clone and open `NexodusAgentApp.xcodeproj` with your swift editor.
-- In `Signing & Capabilities` of the project, select `Sing to Run Locally` and click the macOS trashcan under `App Sandbox` as shown in the following image.
+- Apple requires an account to develop in xcode, set up a provisioning profile to code sign your apps:
+    - Open Xode preferences (Xcode > Preferences…)
+    - Click the ‘Accounts’ tab
+    - Login with your Apple ID (+ > Add Apple ID…)
+    - Once you’ve successfully logged in, a new ‘Personal Team’ with the role ‘Free’ will appear beneath your Apple ID. Then you can switch sign locally to your personal team under `Signing & Capabilities`.
+    - Alternatively, you can build using xcodebuilder in the same fashion as CI with the following with xcode v15.0+ but ultimately you'll want to be able to build in your IDE as well.
 
-![no-alt-text](../docs/images/darwin-gui-dev-1.png)
+```
+CI_SKIP_SIGNING=true xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentApp
+CI_SKIP_SIGNING=true xcodebuild -project NexodusAgentApp.xcodeproj -scheme NexodusAgentHelper
+```
 
-- Next run the app by hitting the play button.
+- Finally, run the app by hitting the play button.
 
 ![no-alt-text](../docs/images/darwin-gui-dev-2.png)
