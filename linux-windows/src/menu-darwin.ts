@@ -5,11 +5,10 @@ import sharedState from "./shared-state";
 export let globalAuthUrl: string | null = null;
 
 // Function to start Nexodus Service
-export const menuConnectClickLinux = () => {
+export const menuConnectClickDarwin = () => {
   console.log("Starting Nexodus Service...");
   const commands = [
-    "systemctl enable nexodus",
-    "systemctl start nexodus",
+    "brew services start nexodus-io/nexodus/nexodus",
     "sleep 5",
     "nexctl nexd status",
   ];
@@ -41,14 +40,15 @@ export const menuConnectClickLinux = () => {
       sharedState.setGlobalAuthUrl(null);
       console.log("No Auth URL found.");
     }
+
     updateContextMenu();
   });
 };
 
 // Function to stop Nexodus Service
-export const menuDisconnectClickLinux = () => {
+export const menuDisconnectClickDarwin = () => {
   console.log("Stopping Nexodus Service...");
-  const commandString = "systemctl stop nexodus";
+  const commandString = "brew services stop nexodus-io/nexodus/nexodus";
   const options = {
     name: "Nexodus Service Stop",
   };
