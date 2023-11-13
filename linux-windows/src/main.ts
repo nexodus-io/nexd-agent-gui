@@ -9,13 +9,18 @@ import {
 } from "electron";
 import path from "path";
 // import { checkWg0Interface } from "./network-utils-linux";
-import { openLogs } from "./log-utils-linux";
+import { openLogs } from "./log-util";
 import { menuConnectClickLinux, menuDisconnectClickLinux } from "./menu-linux";
 import { menuConnectClickWin, menuDisconnectClickWin } from "./menu-windows";
 import { checkWgInterfaceWin } from "./network-utils-windows";
 import { checkWgInterfaceLinux } from "./network-utils-linux";
 import sharedState from "./shared-state";
 import * as os from "os";
+import {
+  menuConnectClickDarwin,
+  menuDisconnectClickDarwin,
+} from "./menu-darwin";
+import { checkWgInterfaceDarwin } from "./network-utils-darwin";
 
 // Initialize the application
 if (require("electron-squirrel-startup")) {
@@ -48,6 +53,10 @@ if (os.platform() === "win32") {
   menuConnectClick = menuConnectClickWin;
   menuDisconnectClick = menuDisconnectClickWin;
   wgInterfaceWatch = checkWgInterfaceWin;
+} else if (os.platform() === "darwin") {
+  menuConnectClick = menuConnectClickDarwin;
+  menuDisconnectClick = menuDisconnectClickDarwin;
+  wgInterfaceWatch = checkWgInterfaceDarwin;
 } else {
   menuConnectClick = menuConnectClickLinux;
   menuDisconnectClick = menuDisconnectClickLinux;
@@ -80,10 +89,14 @@ const menuItems: MenuItemConstructorOptions[] = [
       await openLogs();
     },
   },
-  {
-    label: "Settings",
-    type: "normal",
-  },
+  // TODO: implement settings
+  // {
+  //   label: "Settings",
+  //   type: "normal",
+  //   click: () => {
+  //     createSettingsWindow();
+  //   },
+  // },
   {
     label: "Quit",
     type: "normal",
@@ -104,6 +117,9 @@ const refreshTrayStatus = async () => {
     try {
       if (process.platform === "win32") {
         newConnectionStatus = await checkWgInterfaceWin();
+      }
+      if (process.platform === "darwin") {
+        newConnectionStatus = await checkWgInterfaceDarwin();
       } else {
         newConnectionStatus = await checkWgInterfaceLinux();
       }
