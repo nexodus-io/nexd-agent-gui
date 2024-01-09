@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "npm-check-updates": "^16.14.12",
     "sudo-prompt": "^9.2.1",
     "ts-node": "^10.9.1"
   }
