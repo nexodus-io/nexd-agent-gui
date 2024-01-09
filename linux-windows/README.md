@@ -22,7 +22,7 @@ cd linux-windows/
 npm install
 
 # Run the app
-npm run
+npm run start
 ```
 
 - `Connect` starts the nexd service. If there are no cached credentials, the app will watch systemd logs for a one-time code for login. If credentials are cached, nexd will connect. Credential prompt occurs here since you are starting a systemd service.
